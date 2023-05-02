@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS rain_info (
   item_ename text NOT NULL,
   result_value text NOT NULL,
   item_unit text NOT NULL,
+  time timestamptz NOT NULL,
 /*  longitude_numeric numeric NOT NULL,
   latitude_numeric numeric NOT NULL,
   monitor_date_date date NOT NULL,
@@ -22,3 +23,4 @@ CREATE TABLE IF NOT EXISTS rain_info (
 */
   PRIMARY KEY(siteid, monitor_month, monitor_date, item_ename)
 );
+CREATE INDEX IF NOT EXISTS rain_info_time_index ON rain_info USING btree (time);

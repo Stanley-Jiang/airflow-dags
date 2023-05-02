@@ -45,7 +45,7 @@ def _get_rain_info_op(apikey: str):
         key = key_func(record)
         if key not in record_keys:
             record_keys[key] = True
-            records.append(record)
+            records.append(make_record(record))
 
     # convert custom fields into their types
     #records = []
@@ -64,6 +64,11 @@ def _get_rain_info_op(apikey: str):
 def key_func(record):
     return "{}-{}-{}-{}".format(record["siteid"], record["monitor_month"],
                                 record["monitor_date"], record["item_ename"])
+
+def make_record(record):
+    record["time"] = datetime.strptime(record["monitor_date"],
+                                       '%Y%m%d').isoformat()
+    return record
 
 def get_rain_info_dag():
     with DagFactory("get_epa_gov_tw_rain_info", 
@@ -89,8 +94,7 @@ def get_rain_info_dag():
                                                    "get_rain_info",
                                                      tmpfile)
         bulkinserttask = pop.bulk_insert_from_stmt(tmpfile)
-        fetchalltask = pop.fetchall_json("rain_info")
 
-        getraininfotask >> createtabletask >> generatestms >>  bulkinserttask >> fetchalltask
+        getraininfotask >> createtabletask >> generatestms >>  bulkinserttask 
 
 get_rain_info_dag()
