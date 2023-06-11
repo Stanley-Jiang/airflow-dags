@@ -74,7 +74,7 @@ def get_rain_info_dag():
     with DagFactory("get_epa_gov_tw_rain_info", 
                     "airflow", 
                     datetime(2023, 4, 27),
-                    "@hourly", 
+                    "@daily",
                     params={ "apikey": Param("", type="string"),
                             "connection_id": Param("postgres_default", type="string") },
                     template_searchpath="/tmp",
