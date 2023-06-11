@@ -12,6 +12,7 @@ class DagFactory:
                  schedule:str,
                  params: dict,
                  template_searchpath: str,
+                 catchup: bool = False,
                  ):
         self.dag_id = dag_id
         self.schedule = schedule
@@ -21,6 +22,7 @@ class DagFactory:
         }
         self.params = params
         self.template_searchpath = template_searchpath
+        self.catchup = catchup
 
     @contextmanager
     def dag(self):
@@ -28,7 +30,9 @@ class DagFactory:
                  default_args=self.default_args,
                  schedule_interval=self.schedule,
                  params=self.params,
-                 template_searchpath=self.template_searchpath) as dag:
+                 template_searchpath=self.template_searchpath,
+                 catchup=self.catchup,
+                 ) as dag:
 
             # register globally
             globals()[self.dag_id] = dag
