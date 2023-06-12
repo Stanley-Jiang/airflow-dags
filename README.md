@@ -40,6 +40,15 @@ docker compose up airflow-init
 docker compose up
 ```
 
+##### login #####
+
+```
+http://localhost:8080
+
+with account:admin, password: admin
+
+```
+
 ##### clean up ######
 
 ```
