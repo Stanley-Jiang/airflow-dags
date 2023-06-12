@@ -18,7 +18,10 @@ You can use the following command to create folders
 ```
 mkdir -p ./dags ./logs ./plugins
 echo -e "AIRFLOW_UID=$(id -u)" > .env
-cd /dags && git clone https://github.com/footprintai/airflow-dags
+cd ./dags && git clone https://github.com/footprintai/airflow-dags
+
+// copy docker-compose file onto the top level of dirs
+cp ./dags/airflow-dags/docker-compose.yaml ./
 ```
 
 We placed additional postgres for storing application data (i.e. the output of each dags are placed under this databases)
