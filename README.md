@@ -45,7 +45,7 @@ docker compose up
 ```
 http://localhost:8080
 
-with account:admin, password: admin
+with account:airflow, password: airflow
 
 ```
 
