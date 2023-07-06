@@ -145,7 +145,7 @@ def get_aqi_info_dag():
                         "shard_id": Param(1, type="integer"),
                         "total_shard": Param(10, type="integer"),
                         "connection_id": Param("postgres_default", type="string") },
-                    template_searchpath="/tmp",
+                    template_searchpath=["/tmp", os.path.dirname(os.path.realpath(__file__))],
                     ).dag() as dag:
 
         shard_id = dag.params["shard_id"]

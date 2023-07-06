@@ -77,7 +77,7 @@ def get_rain_info_dag():
                     "@daily",
                     params={ "apikey": Param("", type="string"),
                             "connection_id": Param("postgres_default", type="string") },
-                    template_searchpath="/tmp",
+                    template_searchpath=["/tmp", os.path.dirname(os.path.realpath(__file__))],
                     ).dag() as dag:
         pop = PostgresOp(dag, dag.params["connection_id"])
         pdop = PandasOp(dag)
