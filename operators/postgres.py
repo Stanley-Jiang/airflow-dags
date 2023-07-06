@@ -30,19 +30,23 @@ class PostgresOp:
         )
 
     def generate_bulk_insert_stmt(self, table_name: str, from_task_id: str,
-                                  out_sql_file:str):
+            out_sql_file:str, update_on_conflict: bool=False, on_conflict_key: str= None):
         return PythonOperator(
             task_id="postgresop.generate_bulk_insert_stmt",
             python_callable=self._generate_bulk_insert_stmt,
-            op_kwargs={"table_name": table_name, "from_task_id": from_task_id,
-                       "out_sql_file": out_sql_file},
+            op_kwargs={"table_name": table_name,
+                "from_task_id": from_task_id,
+                "out_sql_file": out_sql_file,
+                "update_on_conflict": update_on_conflict,
+                "on_conflict_key": on_conflict_key,
+                },
             provide_context=True,
             do_xcom_push=True,
             dag=self.dag,
         )
 
     def _generate_bulk_insert_stmt(self, ti, table_name: str, from_task_id:
-                                   str, out_sql_file: str):
+            str, out_sql_file: str, update_on_conflict: bool, on_conflict_key:str):
         jsonobjs = ti.xcom_pull(task_ids=from_task_id)
         if "value" not in jsonobjs:
             raise Exception("value are not here")
@@ -54,7 +58,14 @@ class PostgresOp:
             for obj in jsonobjs["value"]: 
                 values = ["'{}'".format(obj[key]) for key in jsonkeys]
                 valuesstr = ",".join(values)
-                stmt = f"INSERT INTO {table_name} ({keysstr}) VALUES({valuesstr}) ON CONFLICT DO NOTHING;"
+                if update_on_conflict:
+                    update_stmt_list = []
+                    for key in jsonkeys:
+                        update_stmt_list.append("{} = EXCLUDED.{}".format(key, key))
+                    update_stmt_cond = ", ".join(update_stmt_list)
+                    stmt = f"INSERT INTO {table_name} ({keysstr}) VALUES({valuesstr}) ON CONFLICT({on_conflict_key}) DO UPDATE SET {update_stmt_cond};"
+                else:
+                    stmt = f"INSERT INTO {table_name} ({keysstr}) VALUES({valuesstr}) ON CONFLICT DO NOTHING;"
                 f.write("{}\n".format(stmt))
         return
 
