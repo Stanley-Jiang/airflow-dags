@@ -15,7 +15,7 @@ from dags.factory import DagFactory
 from operators.postgres import PostgresOp
 from lib.requests import debug_requests
 
-DAG_ID = "get_wot_gov_tw_aqi_info"
+DAG_ID = "get_wot_moenv_gov_tw_aqi"
 
 def get_aqi_info_op(dag: DAG):
     return PythonOperator(task_id="get_aqi_info",
